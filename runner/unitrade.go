@@ -58,20 +58,14 @@ func (u *UniTrade) ExecuteBackrun(ctx context.Context, txHash common.Hash) {
 
 	// Back run only UniSwapRouter02 trades for simplicity
 	if tx.To().Hash() == _UniSwapRouter02.Hash() {
-		u.logger.Debug("Found uniswap trade", zap.String("txHash", txHash.Hex()))
+		u.logger.Debug("✅ Found uniswap trade", zap.String("txHash", txHash.Hex()))
 		trade, err := u.decodeTx(tx)
 		if err != nil {
 			u.logger.Error("decode transaction failed", zap.Error(err), zap.String("txHash", txHash.Hex()))
 			return
 		}
-
-		// Validate whether transaction landed on-chain
-		receipt, err := u.clients.EthClient.TransactionReceipt(ctx, txHash)
-		if err != nil {
-			u.logger.Error("failed to check transaction receipt", zap.Error(err), zap.String("txHash", txHash.Hex()))
-			return
-		}
-		if trade != nil && receipt != nil && (trade.TradeParams.Params.TokenOut) == _WETHAddress.String() {
+		// assume that transaction is still pending
+		if trade != nil && trade.TradeParams.Params.TokenOut == _WETHAddress.String() {
 			// user is trading X tokens for WETH
 			// buy X tokens
 			_ = u.execute(ctx, trade, tx)
@@ -103,7 +97,8 @@ func (u *UniTrade) execute(ctx context.Context, trade *btypes.UniswapTrade, memp
 	if err != nil {
 		return fmt.Errorf("failed to get sushipool token0 %v", err)
 	}
-
+	fmt.Printf("sushitoken0:%s unitoken0:%s unipool address:%s sushipooladdress:%s",
+		sushiToken0.Hex(), uniToken0.Hex(), uniPoolAddress.Hex(), sushiPoolAddress.Hex())
 	buyAmount := trade.TradeParams.Params.AmountIn // exactInputSingle
 	if buyAmount == nil {
 		buyAmount = trade.TradeParams.Params.AmountInMaximum // ExactOutputSingle
@@ -116,7 +111,7 @@ func (u *UniTrade) execute(ctx context.Context, trade *btypes.UniswapTrade, memp
 	// build transaction meta data
 	auth.Value = big.NewInt(0)
 	auth.GasLimit = uint64(800000)
-	auth.GasPrice = big.NewInt(42000000000) // maxFeePerGas
+	// auth.GasPrice = big.NewInt(42000000000) // maxFeePerGas
 	auth.Context = context.Background()
 	gasFeeCap, err := u.clients.EthClient.SuggestGasPrice(context.Background())
 	if err != nil {
@@ -202,6 +197,9 @@ func (u *UniTrade) getPoolAddresses(trade *btypes.UniswapTrade) (*common.Address
 	sushiPoolAddress, err := u.contracts.SushiswapFactory.GetPair(&bind.CallOpts{}, common.HexToAddress(trade.TradeParams.Params.TokenIn), common.HexToAddress(trade.TradeParams.Params.TokenOut))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get sushi pool %v", zap.Error(err))
+	}
+	if sushiPoolAddress == _UnknownAddress {
+		return nil, nil, fmt.Errorf("sushi pool does not available for this token pair")
 	}
 	return &uniPoolAddress, &sushiPoolAddress, nil
 }

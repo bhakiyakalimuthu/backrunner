@@ -27,10 +27,10 @@ gofumpt:
 	gofumpt -l -w -extra .
 
 docker-image:
-	DOCKER_BUILDKIT=1 docker build --platform linux/amd64 --progress=plain  --build-arg VERSION=${VERSION} . -t ${APP_NAME}:${VERSION}
+	DOCKER_BUILDKIT=1 docker build --platform linux/amd64 --progress=plain  --build-arg VERSION=${VERSION} . -t ${APP_NAME}-${VERSION}:${VERSION}
 
 osx-docker-image:
-	DOCKER_BUILDKIT=1 docker build --platform linux/arm64  --progress=plain  --build-arg VERSION=${VERSION} . -t ${APP_NAME}:latest
+	DOCKER_BUILDKIT=1 docker build --platform linux/arm64  --progress=plain  --build-arg APP_NAME=${APP_NAME} --build-arg VERSION=${VERSION} . -t ${APP_NAME}-${VERSION}:latest
 
 docker-run:
-	docker run --env-file=.env.example backrunner
+	docker run --env-file=.env backrunner-${VERSION}
