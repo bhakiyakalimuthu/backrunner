@@ -29,15 +29,14 @@ var (
 	_BuildVersion string
 	_AppName      string
 
-	_SushiswapFactory = common.HexToAddress("0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac")
-	_UniswapV3Factory = common.HexToAddress("0x1F98431c8aD98523631AE4a59f267346ea31F984")
+	_SushiswapFactory = common.HexToAddress("0xc0aee478e3658e2610c5f7a4a2e1777ce9e4f2ac")
+	_UniswapV3Factory = common.HexToAddress("0x1f98431c8ad98523631ae4a59f267346ea31f984")
 	_BackrunExecutor  = common.HexToAddress("0x0000000000000000000000000000000000000000")
 )
 
 func main() {
 	cfg := config.NewConfig()
 	l := newLogger(_AppName, _BuildVersion)
-
 	ctx, cancel := context.WithCancel(context.Background())
 
 	// init clients
@@ -53,6 +52,7 @@ func main() {
 	subscriber := gethclient.New(baseClient)
 	fbClient := flashbotsrpc.New(cfg.FlashbotsRelayURL)
 
+	// init contracts
 	uniFactory, err := uniswapfactory.NewUniswapfactory(_UniswapV3Factory, ethClient)
 	if err != nil {
 		l.Fatal("failed to create unipool instance", zap.Error(err))
@@ -74,8 +74,10 @@ func main() {
 		SushiswapFactory: sushiFactory,
 		Executor:         executor,
 	}
-	senderKey, bundlerKey := createSigningKeys(l, cfg)
-	runner := runner.NewRunner(l, clients, contracts, senderKey, bundlerKey)
+	bundlerKey, senderKey := createSigningKeys(l, cfg)
+
+	uniswapTrade := runner.NewUniTrade(l, clients, contracts, senderKey, bundlerKey)
+	runner := runner.NewRunner(l, clients, uniswapTrade)
 
 	exit := make(chan struct{})
 	go func() {
@@ -92,6 +94,7 @@ func main() {
 	}
 	<-exit
 }
+
 func newLogger(appName, version string) *zap.Logger {
 	logLevel := zap.DebugLevel
 	var zapCore zapcore.Core
