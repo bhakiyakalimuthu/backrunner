@@ -6,6 +6,8 @@
 ### Blue print 
 - Design blueprint is attached [here](https://hackmd.io/@FdW5ADdtSn6Xozlgy3Rsyg/SJeDWSAz2) 
 
+### Architecture diagram
+![plot](./backrunner_architecture.png)
 
 # Pre requisites
 - Go 1.19

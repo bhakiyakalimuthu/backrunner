@@ -60,6 +60,9 @@ func NewRunner(logger *zap.Logger, clients *Clients, trade Trade) *Runner {
 	}
 }
 
+// MonitorMempool method monitor the mempool for pending transaction
+// Whenever pending transactions are received it executes the backrun trade
+// currently only uniswap trade will be executed but it can be extended to other pools
 func (r *Runner) MonitorMempool(ctx context.Context) error {
 	pendingTxs := make(chan common.Hash)
 	subscription, err := r.clients.Subscriber.SubscribePendingTransactions(ctx, pendingTxs)
