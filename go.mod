@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/ethereum/go-ethereum v1.11.5
+	github.com/go-playground/assert/v2 v2.2.0
 	github.com/go-playground/validator/v10 v10.12.0
 	github.com/mattn/go-colorable v0.1.13
 	github.com/metachris/flashbotsrpc v0.5.0
@@ -13,6 +14,7 @@ require (
 
 require (
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
+	github.com/benbjohnson/clock v1.1.0 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.2 // indirect
 	github.com/deckarep/golang-set/v2 v2.1.0 // indirect
