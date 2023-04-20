@@ -30,10 +30,14 @@
 ## How to run
 * configure `.env.example`
 ``` text 
-    export  ETH_CLIENT_URL - ETH websocket client 
-    export FLASHBOTS_RELAY_URL - Flashbots bundle relay url"
-    export BUNDLE_SINGING_KEY -  private key for signing flashbots bundle 
-    export SENDER_SINGING_KEY - private key for signing transaction
+    ETH_CLIENT_URL - ETH websocket client 
+    FLASHBOTS_RELAY_URL - Flashbots bundle relay url"
+    BUNDLE_SINGING_KEY -  private key for signing flashbots bundle 
+    SENDER_SINGING_KEY - private key for signing transaction
 ```
 * source your env file
 * then start the server as `go run cmd/api/main.go`
+## Run as docker container
+    make docker-image
+    make docker-run
+* Note:Make sure to update the .env.example file before running as docker container

@@ -1,4 +1,4 @@
-all: clean build test test-race lint gofumpt docker-image
+all: clean build test test-race lint gofumpt docker-image docker-run
 APP_NAME := backrunner
 
 GOPATH := $(if $(GOPATH),$(GOPATH),~/go)
@@ -27,7 +27,10 @@ gofumpt:
 	gofumpt -l -w -extra .
 
 docker-image:
-	DOCKER_BUILDKIT=1 docker build --platform linux/amd64 --progress=plain --build-arg APP_NAME=${APP_NAME} --build-arg VERSION=${VERSION} . -t ${APP_NAME}:${VERSION}
+	DOCKER_BUILDKIT=1 docker build --platform linux/amd64 --progress=plain  --build-arg VERSION=${VERSION} . -t ${APP_NAME}:${VERSION}
 
 osx-docker-image:
-	DOCKER_BUILDKIT=1 docker build --platform linux/arm64  --progress=plain --build-arg APP_NAME=${APP_NAME} --build-arg VERSION=${VERSION} . -t ${APP_NAME}:latest
+	DOCKER_BUILDKIT=1 docker build --platform linux/arm64  --progress=plain  --build-arg VERSION=${VERSION} . -t ${APP_NAME}:latest
+
+docker-run:
+	docker run --env-file=.env.example backrunner
