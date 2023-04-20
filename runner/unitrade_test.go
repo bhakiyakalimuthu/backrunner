@@ -3,7 +3,6 @@ package runner
 import (
 	"context"
 	"crypto/ecdsa"
-	"fmt"
 	"math/big"
 	"testing"
 
@@ -21,7 +20,6 @@ import (
 var (
 	_SushiswapFactory = common.HexToAddress("0xc0aee478e3658e2610c5f7a4a2e1777ce9e4f2ac")
 	_UniswapV3Factory = common.HexToAddress("0x1f98431c8ad98523631ae4a59f267346ea31f984")
-	_BackrunExecutor  = common.HexToAddress("0x0000000000000000000000000000000000000000")
 )
 
 func TestUniTrade_Decode(t *testing.T) {
@@ -44,6 +42,10 @@ func TestUniTrade_Decode(t *testing.T) {
 		return
 	}
 	executor, err := executor.NewExecutor(common.HexToAddress("0x4951a1c579039ebfcba0be33d2cd3a6d30b0f802"), ethClient)
+	if err != nil {
+		t.Errorf("failed to create unipool instance %v", err)
+		return
+	}
 
 	clients := &Clients{
 		EthClient: ethClient,
@@ -62,11 +64,11 @@ func TestUniTrade_Decode(t *testing.T) {
 		senderKey:  senderKey,
 		bundlerKey: bundlerKey,
 	}
-	//txHash := common.HexToHash("0xe1a8229ba40433afd22bfe766c028cbb9a23930ea705cb54022d0fc0da79926d")
+	// txHash := common.HexToHash("0xe1a8229ba40433afd22bfe766c028cbb9a23930ea705cb54022d0fc0da79926d")
 	txHash := common.HexToHash("0x6b059739e1c53523982a687f1b998103377a72e0a65ea0598ceb177ade022da7")
 	tx, _, err := ethClient.TransactionByHash(ctx, txHash)
 	if err != nil {
-		fmt.Errorf("failed to TransactionByHash %v", err)
+		t.Errorf("failed to TransactionByHash %v", err)
 		return
 	}
 	trade, err := u.decodeTx(ctx, tx)
@@ -102,7 +104,10 @@ func TestUniTrade_ExecuteBackrun(t *testing.T) {
 		return
 	}
 	executor, err := executor.NewExecutor(common.HexToAddress("0x4951a1c579039ebfcba0be33d2cd3a6d30b0f802"), ethClient)
-
+	if err != nil {
+		t.Errorf("failed to create unipool instance %v", err)
+		return
+	}
 	clients := &Clients{
 		EthClient: ethClient,
 		FbClient:  fbClient,
@@ -120,11 +125,11 @@ func TestUniTrade_ExecuteBackrun(t *testing.T) {
 		senderKey:  senderKey,
 		bundlerKey: bundlerKey,
 	}
-	//txHash := common.HexToHash("0xe1a8229ba40433afd22bfe766c028cbb9a23930ea705cb54022d0fc0da79926d")
+	// txHash := common.HexToHash("0xe1a8229ba40433afd22bfe766c028cbb9a23930ea705cb54022d0fc0da79926d")
 	txHash := common.HexToHash("0x6b059739e1c53523982a687f1b998103377a72e0a65ea0598ceb177ade022da7")
 	tx, _, err := ethClient.TransactionByHash(ctx, txHash)
 	if err != nil {
-		fmt.Errorf("failed to TransactionByHash %v", err)
+		t.Errorf("failed to TransactionByHash %v", err)
 		return
 	}
 	trade, err := u.decodeTx(ctx, tx)
@@ -132,9 +137,10 @@ func TestUniTrade_ExecuteBackrun(t *testing.T) {
 		t.Errorf("failed to create unipool instance %v", err)
 		return
 	}
-	u.execute(ctx, trade, tx)
+	_ = u.execute(ctx, trade, tx)
 }
-func createSigningKeys() (bundleSigningKey *ecdsa.PrivateKey, senderSigningKey *ecdsa.PrivateKey) {
+
+func createSigningKeys() (bundleSigningKey, senderSigningKey *ecdsa.PrivateKey) {
 	bundleSigningKey, _ = crypto.GenerateKey()
 	senderSigningKey, _ = crypto.GenerateKey()
 	return

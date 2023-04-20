@@ -18,7 +18,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/ethclient/gethclient"
 	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/mattn/go-colorable"
 	"github.com/metachris/flashbotsrpc"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -62,7 +61,9 @@ func main() {
 		l.Fatal("failed to create unipool instance", zap.Error(err))
 	}
 	executor, err := executor.NewExecutor(_BackrunExecutor, ethClient)
-
+	if err != nil {
+		l.Fatal("failed to create  executor instance", zap.Error(err))
+	}
 	clients := &runner.Clients{
 		BaseClient: baseClient,
 		Subscriber: subscriber,
@@ -98,28 +99,18 @@ func main() {
 func newLogger(appName, version string) *zap.Logger {
 	logLevel := zap.DebugLevel
 	var zapCore zapcore.Core
-	if version == "dev" {
-		_cfg := zap.NewDevelopmentEncoderConfig()
-		_cfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
-		zapCore = zapcore.NewCore(
-			zapcore.NewConsoleEncoder(_cfg),
-			zapcore.AddSync(colorable.NewColorableStdout()),
-			zapcore.DebugLevel,
-		)
-	} else {
-		level := zap.NewAtomicLevel()
-		level.SetLevel(logLevel)
-		encoderCfg := zap.NewProductionEncoderConfig()
-		encoder := zapcore.NewConsoleEncoder(encoderCfg)
-		encoder = zapcore.NewJSONEncoder(encoderCfg)
-		zapCore = zapcore.NewCore(encoder, zapcore.Lock(os.Stdout), level)
-	}
+	level := zap.NewAtomicLevel()
+	level.SetLevel(logLevel)
+	encoderCfg := zap.NewProductionEncoderConfig()
+	encoder := zapcore.NewJSONEncoder(encoderCfg)
+	zapCore = zapcore.NewCore(encoder, zapcore.Lock(os.Stdout), level)
+
 	logger := zap.New(zapCore, zap.AddCaller(), zap.ErrorOutput(zapcore.Lock(os.Stderr)))
 	logger = logger.With(zap.String("app", appName), zap.String("_BuildVersion", version))
 	return logger
 }
 
-func createSigningKeys(l *zap.Logger, cfg *config.Config) (bundleSigningKey *ecdsa.PrivateKey, senderSigningKey *ecdsa.PrivateKey) {
+func createSigningKeys(l *zap.Logger, cfg *config.Config) (bundleSigningKey, senderSigningKey *ecdsa.PrivateKey) {
 	var err error
 	if cfg.BundleSigningKey == "" {
 		l.Fatal("Cannot use relay without a bundle signing key.")
