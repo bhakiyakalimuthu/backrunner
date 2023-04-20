@@ -19,7 +19,7 @@ import (
 var (
 	_UniSwapRouter02 = common.HexToAddress("0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45")
 	_WETHAddress     = common.HexToAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
-
+	_UnknownAddress  = common.HexToAddress("0x0000000000000000000000000000000000000000")
 	//go:embed abi/unifactory/uniswaprouter02.json
 	uniswapRouter02Bytes []byte
 )

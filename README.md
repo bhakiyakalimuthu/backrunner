@@ -1,5 +1,5 @@
 # backrunner 
->* This repo contains a code for a simple DEX backrunner arbitrage bot. For simplicity this only looks for uniswaprouter02 trade.
+>* This repo containing code for a simple DEX backrunner arbitrage bot. For simplicity this only looks for uniswaprouter02 trade.
 >* This can be improved by adding more different trades
 
 
