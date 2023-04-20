@@ -71,7 +71,7 @@ func TestUniTrade_Decode(t *testing.T) {
 		t.Errorf("failed to TransactionByHash %v", err)
 		return
 	}
-	trade, err := u.decodeTx(ctx, tx)
+	trade, err := u.decodeTx(tx)
 	if err != nil {
 		t.Errorf("failed to create unipool instance %v", err)
 		return
@@ -132,7 +132,7 @@ func TestUniTrade_ExecuteBackrun(t *testing.T) {
 		t.Errorf("failed to TransactionByHash %v", err)
 		return
 	}
-	trade, err := u.decodeTx(ctx, tx)
+	trade, err := u.decodeTx(tx)
 	if err != nil {
 		t.Errorf("failed to create unipool instance %v", err)
 		return

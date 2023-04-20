@@ -59,7 +59,7 @@ func (u *UniTrade) ExecuteBackrun(ctx context.Context, txHash common.Hash) {
 	// Back run only UniSwapRouter02 trades for simplicity
 	if tx.To().Hash() == _UniSwapRouter02.Hash() {
 		u.logger.Debug("Found uniswap trade", zap.String("txHash", txHash.Hex()))
-		trade, err := u.decodeTx(ctx, tx)
+		trade, err := u.decodeTx(tx)
 		if err != nil {
 			u.logger.Error("decode transaction failed", zap.Error(err), zap.String("txHash", txHash.Hex()))
 			return
@@ -206,7 +206,7 @@ func (u *UniTrade) getPoolAddresses(trade *btypes.UniswapTrade) (*common.Address
 	return &uniPoolAddress, &sushiPoolAddress, nil
 }
 
-func (u *UniTrade) decodeTx(ctx context.Context, tx *types.Transaction) (*btypes.UniswapTrade, error) {
+func (u *UniTrade) decodeTx(tx *types.Transaction) (*btypes.UniswapTrade, error) {
 	if !(len(tx.Data()) >= scMethodSizeInBytes) {
 		return nil, fmt.Errorf("unknown transaction data len")
 	}
