@@ -33,7 +33,7 @@
 * configure `.env.example`
 ``` text 
     ETH_CLIENT_URL - ETH websocket client 
-    FLASHBOTS_RELAY_URL - Flashbots bundle relay url"
+    FLASHBOTS_RELAY_URL - Flashbots bundle relay url
     BUNDLE_SINGING_KEY -  private key for signing flashbots bundle 
     SENDER_SINGING_KEY - private key for signing transaction
 ```
@@ -43,3 +43,6 @@
     make docker-image
     make docker-run
 * Note:Make sure to update the .env.example file before running as docker container
+
+> **Warning**
+> This is just a protype. Running a mempool backrunner can be risky. There are poison tokens that drain your liquidity when you trade them. See [salmonella](https://github.com/Defi-Cartel/salmonella) for an example.
