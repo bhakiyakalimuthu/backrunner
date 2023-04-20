@@ -13,7 +13,6 @@ RUN --mount=type=cache,target=/root/.cache/go-build CGO_ENABLED=0 go build -trim
 
 FROM alpine:latest
 WORKDIR /app
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /build/backrunner /app/backrunner
 RUN chmod +x /app/backrunner
 CMD ["/app/backrunner"]

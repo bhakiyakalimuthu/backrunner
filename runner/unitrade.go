@@ -85,26 +85,28 @@ func (u *UniTrade) execute(ctx context.Context, trade *btypes.UniswapTrade, memp
 	if err != nil {
 		return err
 	}
+
 	unipool, err := iunipool.NewIunipool(*uniPoolAddress, u.clients.EthClient)
 	if err != nil {
 		return fmt.Errorf("failed to create unipool instance %v", err)
 	}
-	uniToken0, err := unipool.Token0(&bind.CallOpts{})
-	if err != nil {
-		return fmt.Errorf("failed to get unipool token0 %v", err)
-	}
 	sushipair, err := isushipair.NewIsushipair(*sushiPoolAddress, u.clients.EthClient)
 	if err != nil {
 		return fmt.Errorf("failed to create sushipair instance %v", err)
+	}
+
+	uniToken0, err := unipool.Token0(&bind.CallOpts{})
+	if err != nil {
+		return fmt.Errorf("failed to get unipool token0 %v", err)
 	}
 	sushiToken0, err := sushipair.Token0(&bind.CallOpts{})
 	if err != nil {
 		return fmt.Errorf("failed to get sushipool token0 %v", err)
 	}
 
-	buyAmount := trade.Params.AmountInMaximum
+	buyAmount := trade.TradeParams.Params.AmountIn // exactInputSingle
 	if buyAmount == nil {
-		buyAmount = trade.Params.AmountIn
+		buyAmount = trade.TradeParams.Params.AmountInMaximum // ExactOutputSingle
 	}
 	auth, err := bind.NewKeyedTransactorWithChainID(u.senderKey, big.NewInt(1))
 	if err != nil {
@@ -116,7 +118,7 @@ func (u *UniTrade) execute(ctx context.Context, trade *btypes.UniswapTrade, memp
 	auth.GasLimit = uint64(800000)
 	auth.GasPrice = big.NewInt(42000000000) // maxFeePerGas
 	auth.Context = context.Background()
-	suggestedGasPrice, err := u.clients.EthClient.SuggestGasPrice(context.Background())
+	gasFeeCap, err := u.clients.EthClient.SuggestGasPrice(context.Background())
 	if err != nil {
 		return fmt.Errorf("failed to get suggestedGasPrice %v", err)
 	}
@@ -128,11 +130,9 @@ func (u *UniTrade) execute(ctx context.Context, trade *btypes.UniswapTrade, memp
 	if err != nil {
 		return fmt.Errorf("failed to get pending nonce %v", err)
 	}
-	gasPrice := suggestedGasPrice.Mul(suggestedGasPrice, big.NewInt(1))
-	gasTipCap := suggestedTip.Mul(suggestedTip, big.NewInt(1))
-	gasFeeCap := new(big.Int).Add(gasPrice, gasTipCap)
 	auth.Nonce = big.NewInt(int64(nonce))
 	auth.GasFeeCap = gasFeeCap
+	auth.GasTipCap = suggestedTip
 
 	tx, err := u.contracts.Executor.Execute(auth,
 		*sushiPoolAddress,
