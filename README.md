@@ -32,7 +32,7 @@
 ## How to run
 * configure `.env.example`
 ``` text 
-    ETH_CLIENT_URL - ETH websocket client 
+    ETH_CLIENT_WSS_URL - ETH websocket client 
     FLASHBOTS_RELAY_URL - Flashbots bundle relay url
     BUNDLE_SINGING_KEY -  private key for signing flashbots bundle 
     SENDER_SINGING_KEY - private key for signing transaction
