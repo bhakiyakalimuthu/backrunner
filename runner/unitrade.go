@@ -53,7 +53,7 @@ func (u *UniTrade) ExecuteBackrun(ctx context.Context, txHash common.Hash) {
 		return
 	}
 	if tx.To() == nil {
-		return // omit contract creation
+		return // Omit contract creation
 	}
 
 	// Back run only UniSwapRouter02 trades for simplicity
@@ -64,10 +64,10 @@ func (u *UniTrade) ExecuteBackrun(ctx context.Context, txHash common.Hash) {
 			u.logger.Error("decode transaction failed", zap.Error(err), zap.String("txHash", txHash.Hex()))
 			return
 		}
-		// assume that transaction is still pending
+		// Assume that transaction is still pending
 		if trade != nil && trade.TradeParams.Params.TokenOut == _WETHAddress.String() {
-			// user is trading X tokens for WETH
-			// buy X tokens
+			// User is trading X tokens for WETH
+			// Buy X tokens
 			_ = u.execute(ctx, trade, tx)
 		}
 	}
@@ -107,7 +107,7 @@ func (u *UniTrade) execute(ctx context.Context, trade *btypes.UniswapTrade, memp
 		return fmt.Errorf("failed to create sender auth %v", err)
 	}
 
-	// build transaction meta data
+	// Build transaction meta data
 	auth.Value = big.NewInt(0)
 	auth.GasLimit = uint64(800000)
 	// auth.GasPrice = big.NewInt(42000000000) // maxFeePerGas

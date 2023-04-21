@@ -61,6 +61,7 @@ func NewRunner(logger *zap.Logger, clients *Clients, trade Trade) *Runner {
 }
 
 // MonitorMempool method monitor the mempool for pending transaction
+// Pending transactions are received via websocket subscription
 // Whenever pending transactions are received it executes the backrun trade
 // currently only uniswap trade will be executed but it can be extended to other pools
 func (r *Runner) MonitorMempool(ctx context.Context) error {
@@ -78,7 +79,6 @@ func (r *Runner) MonitorMempool(ctx context.Context) error {
 		case err := <-subscription.Err():
 			return fmt.Errorf("error occured in pending tx subscription: %v", err)
 		case <-ctx.Done():
-			close(pendingTxs)
 			return nil
 		}
 	}

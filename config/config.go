@@ -7,13 +7,19 @@ import (
 
 // Config contains environment values
 type Config struct {
-	DebugLog          bool   `env:"DEBUG_LOG" envDefault:"false"`
-	LogJSON           bool   `env:"LOG_JSON" envDefault:"true"`
-	AppName           string `env:"APP_NAME" envDefault:"backrunner"`
-	EthClientURL      string `env:"ETH_CLIENT_URL" envDefault:""`
+	DebugLog bool   `env:"DEBUG_LOG" envDefault:"false"`
+	LogJSON  bool   `env:"LOG_JSON" envDefault:"true"`
+	AppName  string `env:"APP_NAME" envDefault:"backrunner"`
+	// Websocket client needed to get pending transaction
+	// subscription doesn't work in RPC
+	EthClientWebSocketURL string `env:"ETH_CLIENT_WSS_URL" envDefault:""`
+	// Flashbots relay URL for simulating and sending bundles to builder
 	FlashbotsRelayURL string `env:"FLASHBOTS_RELAY_URL" envDefault:"https://relay.flashbots.net"`
-	BundleSigningKey  string `env:"BUNDLE_SINGING_KEY" envDefault:""`
-	SenderSigningKey  string `env:"SENDER_SINGING_KEY" envDefault:""`
+	// Bundle signing key for signing Flashbots bundles
+	// This key will be identified by Flashbots reputation system
+	BundleSigningKey string `env:"BUNDLE_SINGING_KEY" envDefault:""`
+	// Sender signing key for signing backrunner transaction
+	SenderSigningKey string `env:"SENDER_SINGING_KEY" envDefault:""`
 }
 
 // LoadFromEnv parses environment variables into a given struct and validates

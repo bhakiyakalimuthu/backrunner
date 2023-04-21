@@ -39,12 +39,12 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	// init clients
-	ethClient, err := ethclient.DialContext(ctx, cfg.EthClientURL)
+	ethClient, err := ethclient.DialContext(ctx, cfg.EthClientWebSocketURL)
 	if err != nil {
 		l.Fatal("failed to dial eth client", zap.Error(err))
 	}
 
-	baseClient, err := rpc.DialContext(ctx, cfg.EthClientURL)
+	baseClient, err := rpc.DialContext(ctx, cfg.EthClientWebSocketURL)
 	if err != nil {
 		l.Fatal("failed to dial rpc client", zap.Error(err))
 	}
