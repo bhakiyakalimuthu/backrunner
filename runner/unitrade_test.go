@@ -24,7 +24,7 @@ var (
 
 func TestUniTrade_Decode(t *testing.T) {
 	ctx := context.Background()
-	ethClient, err := ethclient.DialContext(ctx, "wss://mainnet.infura.io/ws/v3/77582faac1cc4bd7be282243cb13afa1")
+	ethClient, err := ethclient.DialContext(ctx, "https://ethereum.publicnode.com")
 	if err != nil {
 		t.Errorf("failed to dial eth client %v", err)
 		return
@@ -85,7 +85,7 @@ func TestUniTrade_Decode(t *testing.T) {
 
 func TestUniTrade_ExecuteBackrunFail(t *testing.T) {
 	ctx := context.Background()
-	ethClient, err := ethclient.DialContext(ctx, "wss://mainnet.infura.io/ws/v3/77582faac1cc4bd7be282243cb13afa1")
+	ethClient, err := ethclient.DialContext(ctx, "https://ethereum.publicnode.com")
 	if err != nil {
 		t.Errorf("failed to dial eth client %v", err)
 		return
@@ -141,7 +141,7 @@ func TestUniTrade_ExecuteBackrunFail(t *testing.T) {
 
 func TestUniTrade_ExecuteBackrun(t *testing.T) {
 	ctx := context.Background()
-	ethClient, err := ethclient.DialContext(ctx, "wss://mainnet.infura.io/ws/v3/77582faac1cc4bd7be282243cb13afa1")
+	ethClient, err := ethclient.DialContext(ctx, "https://ethereum.publicnode.com")
 	if err != nil {
 		t.Errorf("failed to dial eth client %v", err)
 		return

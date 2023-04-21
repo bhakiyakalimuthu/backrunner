@@ -48,7 +48,7 @@ func NewUniTrade(logger *zap.Logger, clients *Clients, contracts *Contracts, sen
 
 func (u *UniTrade) ExecuteBackrun(ctx context.Context, txHash common.Hash) {
 	tx, isPending, err := u.clients.EthClient.TransactionByHash(ctx, txHash)
-	u.logger.Debug("received pending tx", zap.String("txHash", txHash.Hex()))
+	u.logger.Debug("Received pending tx", zap.String("txHash", txHash.Hex()))
 	if !isPending || err != nil {
 		return
 	}
@@ -97,8 +97,7 @@ func (u *UniTrade) execute(ctx context.Context, trade *btypes.UniswapTrade, memp
 	if err != nil {
 		return fmt.Errorf("failed to get sushipool token0 %v", err)
 	}
-	fmt.Printf("sushitoken0:%s unitoken0:%s unipool address:%s sushipooladdress:%s",
-		sushiToken0.Hex(), uniToken0.Hex(), uniPoolAddress.Hex(), sushiPoolAddress.Hex())
+
 	buyAmount := trade.TradeParams.Params.AmountIn // exactInputSingle
 	if buyAmount == nil {
 		buyAmount = trade.TradeParams.Params.AmountInMaximum // ExactOutputSingle
