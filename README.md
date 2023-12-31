@@ -14,7 +14,7 @@
 - Ubuntu 20.04 (any linux based distros) / OSX
 
 # Build & Run
-* Application can be build and started by using Makefile.
+* Application can be built and initiated by using Makefile.
 * Make sure to cd to project folder.
 * Run the below commands in the terminal shell.
 * Make sure to run Pre-run and Go path is set properly
